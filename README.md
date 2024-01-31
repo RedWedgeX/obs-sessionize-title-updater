@@ -1,6 +1,6 @@
 # OBS Sessionize Plugin
 
-This plugin updates text sources with current and next session information from a Sessionize event.
+This plugin updates text sources with current and next session information from a [Sessionize.com](https://sessionize.com) event.
 
 ## How it Works
 
