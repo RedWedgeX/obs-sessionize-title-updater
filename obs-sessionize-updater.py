@@ -60,6 +60,8 @@ def script_defaults(settings):
     obs.obs_data_set_default_string(settings, "room_name", "")
     obs.obs_data_set_default_int(settings, "fetch_interval_minutes", 5)
 
+
+def script_properties():
     props = obs.obs_properties_create()
     obs.obs_properties_add_bool(props, "enabled", "Enabled")
     
@@ -74,7 +76,6 @@ def script_defaults(settings):
         prop = obs.obs_properties_add_list(props, source_name, f"{source_name.replace('_', ' ').title()} Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
         for item in list_of_sources:
             obs.obs_property_list_add_string(prop, *item)
-
     obs.obs_properties_add_int(props, "fetch_interval_minutes", "Fetch Interval (minutes)", 1, 60, 1)
 
     # Get a list of all timezones
