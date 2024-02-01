@@ -227,8 +227,21 @@ def get_last_fetch_time():
         obs.script_log(obs.LOG_WARNING, "File 'last_fetch_time.txt' not found.")
         return None
 
+tick_counter = 0
+
 def script_tick(seconds):
-    global last_fetch_time
+    global last_fetch_time, tick_counter
+
+    # Increment the tick counter
+    tick_counter += 1
+
+    # If 10 seconds have not passed, just return
+    if tick_counter < 10:
+        return
+
+    # Reset the tick counter
+    tick_counter = 0
+
     if not enabled:
         return
 
@@ -253,6 +266,3 @@ def script_tick(seconds):
     set_text(current_presenters_source_name, current_presenters)
     set_text(next_title_source_name, next_title)
     set_text(next_presenters_source_name, next_presenters)
-
-# Initialize last_fetch_time when the script starts
-last_fetch_time = get_last_fetch_time()
