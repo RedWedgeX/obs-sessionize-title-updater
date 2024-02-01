@@ -49,6 +49,10 @@ def script_properties():
     list_of_sources = [(obs.obs_source_get_name(source), obs.obs_source_get_name(source)) for source in sources if obs.obs_source_get_id(source) == 'text_gdiplus' or obs.obs_source_get_id(source) == 'text_ft2_source']
     obs.source_list_release(sources)
 
+    # Debug logging
+    for source in sources:
+        obs.script_log(obs.LOG_INFO, f"Source name: {obs.obs_source_get_name(source)}, ID: {obs.obs_source_get_id(source)}")
+
     # Add dropdown lists for the source names
     prop = obs.obs_properties_add_list(props, "current_title_source", "Current Title Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
     for item in list_of_sources:
