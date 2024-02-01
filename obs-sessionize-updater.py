@@ -50,25 +50,37 @@ def script_properties():
     obs.source_list_release(sources)
 
     # Add dropdown lists for the source names
-    obs.obs_properties_add_list(props, "current_title_source", "Current Title Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING, list_of_sources)
-    obs.obs_properties_add_list(props, "current_presenters_source", "Current Presenters Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING, list_of_sources)
-    obs.obs_properties_add_list(props, "next_title_source", "Next Title Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING, list_of_sources)
-    obs.obs_properties_add_list(props, "next_presenters_source", "Next Presenters Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING, list_of_sources)
-    obs.obs_properties_add_int(props, "fetch_interval_minutes", "Fetch Interval (minutes)", 1, 60, 1)
+    prop = obs.obs_properties_add_list(props, "current_title_source", "Current Title Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
+    for item in list_of_sources:
+        obs.obs_property_list_add_string(prop, *item)
 
+    prop = obs.obs_properties_add_list(props, "current_presenters_source", "Current Presenters Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
+    for item in list_of_sources:
+        obs.obs_property_list_add_string(prop, *item)
+
+    prop = obs.obs_properties_add_list(props, "next_title_source", "Next Title Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
+    for item in list_of_sources:
+        obs.obs_property_list_add_string(prop, *item)
+
+    prop = obs.obs_properties_add_list(props, "next_presenters_source", "Next Presenters Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
+    for item in list_of_sources:
+        obs.obs_property_list_add_string(prop, *item)
+
+    obs.obs_properties_add_int(props, "fetch_interval_minutes", "Fetch Interval (minutes)", 1, 60, 1)
 
     # Get a list of all timezones
     list_of_timezones = [(tz, tz) for tz in pytz.all_timezones]
 
     # Add dropdown list for the local timezone
-    obs.obs_properties_add_list(props, "local_timezone", "Local Timezone", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING, list_of_timezones)
+    prop = obs.obs_properties_add_list(props, "local_timezone", "Local Timezone", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
+    for item in list_of_timezones:
+        obs.obs_property_list_add_string(prop, *item)
 
     obs.obs_properties_add_text(props, "url", "URL", obs.OBS_TEXT_DEFAULT)
     obs.obs_properties_add_text(props, "fake_current_datetime", "Fake Current LOCAL DateTime (format: YYYY-MM-DDTHH:MM:SS)", obs.OBS_TEXT_DEFAULT)
     obs.obs_properties_add_text(props, "room_name", "Room Name", obs.OBS_TEXT_DEFAULT)
 
     return props
-
 def fetch_data_from_api(api_url):
     # Send a GET request to the API
     response = requests.get(api_url)
