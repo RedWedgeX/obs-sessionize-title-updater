@@ -1,0 +1,109 @@
+[
+    {
+      "groupId": null,
+      "groupName": "All",
+      "sessions": [
+        {
+          "questionAnswers": [],
+          "id": "616769",
+          "title": "Emma's Session",
+          "description": "Usually, you would find a session description here. But, this is not a real session submission, so let just say we'll talk about Consumer, Interview, Personal branding. Ha!",
+          "startsAt": "2024-03-15T16:00:00Z",
+          "endsAt": "2024-03-15T17:00:00Z",
+          "isServiceSession": false,
+          "isPlenumSession": false,
+          "speakers": [
+            {
+              "id": "00000000-0000-0000-0000-000000000002",
+              "name": "Emma Test"
+            },
+            {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "Sophia Test"
+            }
+          ],
+          "categories": [],
+          "roomId": 44900,
+          "room": "Track 1",
+          "liveUrl": null,
+          "recordingUrl": null,
+          "status": "Accepted",
+          "isInformed": true,
+          "isConfirmed": false
+        },
+        {
+          "questionAnswers": [],
+          "id": "616771",
+          "title": "Aiden's Session",
+          "description": "Usually, you would find a session description here. But, this is not a real session submission, so let just say we'll talk about Coffee, Shoe, Board games. Ha!",
+          "startsAt": "2024-03-15T16:00:00Z",
+          "endsAt": "2024-03-15T17:00:00Z",
+          "isServiceSession": false,
+          "isPlenumSession": false,
+          "speakers": [
+            {
+              "id": "00000000-0000-0000-0000-000000000004",
+              "name": "Aiden Test"
+            }
+          ],
+          "categories": [],
+          "roomId": 44901,
+          "room": "Track 2",
+          "liveUrl": null,
+          "recordingUrl": null,
+          "status": "Accepted",
+          "isInformed": true,
+          "isConfirmed": false
+        },
+        {
+          "questionAnswers": [],
+          "id": "616774",
+          "title": "Noah's Session",
+          "description": "Usually, you would find a session description here. But, this is not a real session submission, so let just say we'll talk about Personal branding, Human resources, Illustration. Ha!",
+          "startsAt": "2024-03-15T16:55:00Z",
+          "endsAt": "2024-03-15T17:55:00Z",
+          "isServiceSession": false,
+          "isPlenumSession": false,
+          "speakers": [
+            {
+              "id": "00000000-0000-0000-0000-000000000007",
+              "name": "Noah Test"
+            }
+          ],
+          "categories": [],
+          "roomId": 44901,
+          "room": "Track 2",
+          "liveUrl": null,
+          "recordingUrl": null,
+          "status": "Accepted",
+          "isInformed": true,
+          "isConfirmed": false
+        },
+        {
+          "questionAnswers": [],
+          "id": "616773",
+          "title": "Liam's Session",
+          "description": "Usually, you would find a session description here. But, this is not a real session submission, so let just say we'll talk about Illustration, Technology, Psychology. Ha!",
+          "startsAt": "2024-03-15T17:00:00Z",
+          "endsAt": "2024-03-15T18:00:00Z",
+          "isServiceSession": false,
+          "isPlenumSession": false,
+          "speakers": [
+            {
+              "id": "00000000-0000-0000-0000-000000000006",
+              "name": "Liam Test"
+            }
+          ],
+          "categories": [],
+          "roomId": 44900,
+          "room": "Track 1",
+          "liveUrl": null,
+          "recordingUrl": null,
+          "status": "Accepted",
+          "isInformed": true,
+          "isConfirmed": false
+        }
+      ],
+      "isDefault": false
+    }
+  ]
