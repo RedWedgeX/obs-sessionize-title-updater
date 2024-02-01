@@ -91,6 +91,7 @@ def script_properties():
     obs.obs_properties_add_text(props, "room_name", "Room Name", obs.OBS_TEXT_DEFAULT)
 
     return props
+
 def fetch_data_from_api(api_url):
     # Send a GET request to the API
     response = requests.get(api_url)
@@ -107,10 +108,12 @@ def fetch_data_from_api(api_url):
             old_data_hash = f.read().strip()
     except FileNotFoundError:
         # If the file does not exist, do nothing
+        obs.script_log(obs.LOG_INFO, "data_hash.txt not found, creating new one.")
         pass
 
     # If the old data hash does not match the new data hash
     if old_data_hash != data_hash:
+        obs.script_log(obs.LOG_INFO, "Data hash has changed, updating the data.")
         # Open the file to store the new data
         with open('schedule_data.json', 'w') as f:
             # Write the new data to the file
@@ -153,10 +156,12 @@ def get_data_from_local():
                 if session['startsAt'] <= current_time < session['endsAt']:
                     current_title = session['title']
                     current_presenters = ', '.join(speaker['name'] for speaker in session['speakers'])
+                    obs.script_log(obs.LOG_INFO, f"Current session: {current_title}, Presenters: {current_presenters}")
                 # If the current time is before a session's start time and the next session title has not been set yet, set the next session title and presenters
                 elif session['startsAt'] > current_time and next_title is None:
                     next_title = session['title']
                     next_presenters = ', '.join(speaker['name'] for speaker in session['speakers'])
+                    obs.script_log(obs.LOG_INFO, f"Next session: {next_title}, Presenters: {next_presenters}")
 
     # Return the current and next session titles and presenters
     return current_title, current_presenters, next_title, next_presenters
@@ -176,6 +181,9 @@ def set_text(source_name, text):
         # Update the source with the new settings
         obs.obs_source_update(source, settings)
         
+        # Log the update
+        obs.script_log(obs.LOG_INFO, f"Updated source {source_name} with text: {text}")
+        
         # Release the OBS data instance to free up memory
         obs.obs_data_release(settings)
         
@@ -183,11 +191,10 @@ def set_text(source_name, text):
         obs.obs_source_release(source)
     else:
         # If the source does not exist, log a warning
-        obs.script_log(obs.LOG_WARNING, f"Source {source_name} does not exist.")
-        
-        
+        obs.script_log(obs.LOG_WARNING, f"Source {source_name} does not exist.")     
+           
 # Function to update the last fetch time
-def update_last_fetch_time():
+ddef update_last_fetch_time():
     global last_fetch_time
     # Get the current time in UTC and format it as an ISO 8601 string
     last_fetch_time = datetime.utcnow().isoformat()
@@ -195,8 +202,8 @@ def update_last_fetch_time():
     with open('last_fetch_time.txt', 'w') as f:
         # Write the last fetch time to the file
         f.write(last_fetch_time)
+    obs.script_log(obs.LOG_INFO, f"Updated last fetch time: {last_fetch_time}")
 
-# Function to get the last fetch time
 def get_last_fetch_time():
     try:
         # Open the file 'last_fetch_time.txt' in read mode
@@ -207,14 +214,13 @@ def get_last_fetch_time():
             return datetime.fromisoformat(last_fetch_time_str)
     except FileNotFoundError:
         # If the file 'last_fetch_time.txt' does not exist, return None
+        obs.script_log(obs.LOG_WARNING, "File 'last_fetch_time.txt' not found.")
         return None
-    
-# Function to be called every 'seconds' seconds
+
 def script_tick(seconds):
     global last_fetch_time
     if not enabled:
         return
-
 
     # Fetch data every fetch_interval_minutes
     if last_fetch_time is None or (datetime.utcnow() - last_fetch_time).total_seconds() >= fetch_interval_minutes * 60:
@@ -225,6 +231,7 @@ def script_tick(seconds):
             update_last_fetch_time()
             # Get the updated last_fetch_time from the file
             last_fetch_time = get_last_fetch_time()
+            obs.script_log(obs.LOG_INFO, "Data fetched from API.")
         except requests.exceptions.RequestException:
             # If fetching data from the API fails, log a warning and use the last fetched data
             obs.script_log(obs.LOG_WARNING, "Failed to fetch data from API. Using the last fetched data.")
@@ -236,7 +243,6 @@ def script_tick(seconds):
     set_text(current_presenters_source_name, current_presenters)
     set_text(next_title_source_name, next_title)
     set_text(next_presenters_source_name, next_presenters)
-    
 
 # Initialize last_fetch_time when the script starts
 last_fetch_time = get_last_fetch_time()
