@@ -8,6 +8,7 @@ import hashlib
 # Properties
 last_fetch_time             = None
 schedule_data               = None
+local_timezone = datetime.now(pytz.timezone('America/Phoenix')).strftime('%Z')
 
 def script_description():
     return "Updates text sources with current and next session information."
