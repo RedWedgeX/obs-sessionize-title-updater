@@ -182,7 +182,7 @@ def set_text(source_name, text):
         obs.obs_source_update(source, settings)
         
         # Log the update
-        obs.script_log(obs.LOG_INFO, f"Updated source {source_name} with text: {text}")
+        #obs.script_log(obs.LOG_INFO, f"Updated source {source_name} with text: {text}")
         
         # Release the OBS data instance to free up memory
         obs.obs_data_release(settings)
