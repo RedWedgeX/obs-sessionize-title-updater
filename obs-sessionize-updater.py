@@ -8,14 +8,17 @@ import hashlib
 # Properties
 last_fetch_time             = None
 schedule_data               = None
+
 local_timezone = datetime.now(pytz.timezone('America/Phoenix')).strftime('%Z')
+
 
 def script_description():
     return "Updates text sources with current and next session information."
 
 def script_update(settings):
-    global url, current_title_source_name, current_presenters_source_name, next_title_source_name, next_presenters_source_name, fake_current_datetime, local_timezone, room_name, fetch_interval_minutes
+    global url, current_title_source_name, current_presenters_source_name, next_title_source_name, next_presenters_source_name, fake_current_datetime, local_timezone, room_name, fetch_interval_minutes, enabled
     url = obs.obs_data_get_string(settings, "url")
+    enabled = obs.obs_data_get_bool(settings, "enabled")
     current_title_source_name = obs.obs_data_get_string(settings, "current_title_source")
     current_presenters_source_name = obs.obs_data_get_string(settings, "current_presenters_source")
     next_title_source_name = obs.obs_data_get_string(settings, "next_title_source")
@@ -26,6 +29,7 @@ def script_update(settings):
     fetch_interval_minutes = obs.obs_data_get_int(settings, "fetch_interval_minutes")
 
 def script_defaults(settings):
+    obs.obs_data_set_default_bool(settings, "enabled", False)
     obs.obs_data_set_default_string(settings, "url", "")
     obs.obs_data_set_default_string(settings, "current_title_source", "")
     obs.obs_data_set_default_string(settings, "current_presenters_source", "")
@@ -38,6 +42,7 @@ def script_defaults(settings):
 
 def script_properties():
     props = obs.obs_properties_create()
+    obs.obs_properties_add_bool(props, "enabled", "Enabled")
     
     # Get a list of all text sources
     sources = obs.obs_enum_sources()
@@ -158,7 +163,8 @@ def set_text(source_name, text):
         # If the source does not exist, log a warning
         obs.script_log(obs.LOG_WARNING, f"Source {source_name} does not exist.")
         
-# Function to update the last fetch time
+        
+d# Function to update the last fetch time
 def update_last_fetch_time():
     global last_fetch_time
     # Get the current time in UTC and format it as an ISO 8601 string
