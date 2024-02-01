@@ -29,6 +29,15 @@ Please note that this script is intended to be used with OBS Studio, and as such
 
 ## Configuration
 
+### Things not to touch
+- `settings.json` - This is where the script stores your settings persistently. **Don't touch it,** you'll configure everything from the OBS Script GUI
+- `schedule_data.json` - This is a sample of the data provided by the Sessionize API. It will get overwritten with your actual data, but if there's not SOMETHING there when the script starts, it generates a crapton of errors. **Don't touch it**
+- `last_fetch_time.txt` - The script uses these to store the last time the data was pulled from sessionize. **Don't touch it.**
+- `data_hash.txt` - The script uses this to store a hash of the sessionize data to verify if it's changed since last pull. **Don't touch it.**
+
+### Things to Touch
+***tl;dr: Set all the settings and THEN click enable.***
+
 The plugin requires the following settings, configurable from the OBS Script window:
 
 - `URL`: The URL of the Sessionize API Schedule Grid endpoint.
@@ -43,11 +52,6 @@ The plugin requires the following settings, configurable from the OBS Script win
 - `Fetch Interval (minutes)`: The interval in minutes at which to fetch new data from the API.
 
 NOTE: You can also set the `Fake Current LOCAL DateTime` setting, formatted `YYYY-MM-DDTHH:MM:SS` to override the current time during testing. Leave this blank for actual use and it will use your current system time.
-
-## Usage
-
-After configuring the plugin, it will automatically update the specified text sources with the current and next session information at the specified fetch interval.
-
 
 
 
