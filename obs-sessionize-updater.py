@@ -164,7 +164,7 @@ def set_text(source_name, text):
         obs.script_log(obs.LOG_WARNING, f"Source {source_name} does not exist.")
         
         
-# Function to update the last fetch time
+d# Function to update the last fetch time
 def update_last_fetch_time():
     global last_fetch_time
     # Get the current time in UTC and format it as an ISO 8601 string
@@ -190,6 +190,9 @@ def get_last_fetch_time():
 # Function to be called every 'seconds' seconds
 def script_tick(seconds):
     global last_fetch_time
+    if not enabled:
+        return
+
 
     # Fetch data every fetch_interval_minutes
     if last_fetch_time is None or (datetime.utcnow() - last_fetch_time).total_seconds() >= fetch_interval_minutes * 60:
