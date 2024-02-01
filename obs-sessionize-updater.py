@@ -31,7 +31,6 @@ def update_source_dropdowns(props):
             
 def script_description():
     return "Updates text sources with current and next session information."
-
 def script_update(settings):
     global url, current_title_source_name, current_presenters_source_name, next_title_source_name, next_presenters_source_name, fake_current_datetime, local_timezone, room_name, fetch_interval_minutes, enabled
     url = obs.obs_data_get_string(settings, "url")
@@ -45,31 +44,40 @@ def script_update(settings):
     room_name = obs.obs_data_get_string(settings, "room_name")
     fetch_interval_minutes = obs.obs_data_get_int(settings, "fetch_interval_minutes")
 
-    props = obs.obs_properties_create()
-    update_source_dropdowns(props)
-    obs.obs_properties_destroy(props)
-
-    # Check if the schedule JSON file exists
-    if not os.path.exists('schedule_data.json'):
-        # If it doesn't exist, fetch the data from the API
-        try:
-            fetch_data_from_api(url)
-            obs.script_log(obs.LOG_INFO, "Fetched schedule data from API.")
-        except requests.exceptions.RequestException:
-            obs.script_log(obs.LOG_WARNING, "Failed to fetch schedule data from API.")
-    
+    # Save settings to a file
+    with open('settings.json', 'w') as f:
+        json.dump({
+            "url": url,
+            "enabled": enabled,
+            "current_title_source": current_title_source_name,
+            "current_presenters_source": current_presenters_source_name,
+            "next_title_source": next_title_source_name,
+            "next_presenters_source": next_presenters_source_name,
+            "fake_current_datetime": fake_current_datetime,
+            "local_timezone": local_timezone,
+            "room_name": room_name,
+            "fetch_interval_minutes": fetch_interval_minutes
+        }, f)
+        
+        
 def script_defaults(settings):
-    obs.obs_data_set_default_bool(settings, "enabled", False)
-    obs.obs_data_set_default_string(settings, "url", "")
-    obs.obs_data_set_default_string(settings, "current_title_source", "")
-    obs.obs_data_set_default_string(settings, "current_presenters_source", "")
-    obs.obs_data_set_default_string(settings, "next_title_source", "")
-    obs.obs_data_set_default_string(settings, "next_presenters_source", "")
-    obs.obs_data_set_default_string(settings, "fake_current_datetime", "")
-    obs.obs_data_set_default_string(settings, "local_timezone", local_timezone)
-    obs.obs_data_set_default_string(settings, "room_name", "")
-    obs.obs_data_set_default_int(settings, "fetch_interval_minutes", 5)
+    # Load settings from a file
+    try:
+        with open('settings.json', 'r') as f:
+            saved_settings = json.load(f)
+    except FileNotFoundError:
+        saved_settings = {}
 
+    obs.obs_data_set_default_bool(settings, "enabled", saved_settings.get("enabled", False))
+    obs.obs_data_set_default_string(settings, "url", saved_settings.get("url", ""))
+    obs.obs_data_set_default_string(settings, "current_title_source", saved_settings.get("current_title_source", ""))
+    obs.obs_data_set_default_string(settings, "current_presenters_source", saved_settings.get("current_presenters_source", ""))
+    obs.obs_data_set_default_string(settings, "next_title_source", saved_settings.get("next_title_source", ""))
+    obs.obs_data_set_default_string(settings, "next_presenters_source", saved_settings.get("next_presenters_source", ""))
+    obs.obs_data_set_default_string(settings, "fake_current_datetime", saved_settings.get("fake_current_datetime", ""))
+    obs.obs_data_set_default_string(settings, "local_timezone", saved_settings.get("local_timezone", local_timezone))
+    obs.obs_data_set_default_string(settings, "room_name", saved_settings.get("room_name", ""))
+    obs.obs_data_set_default_int(settings, "fetch_interval_minutes", saved_settings.get("fetch_interval_minutes", 5))
 
 def script_properties():
     props = obs.obs_properties_create()
