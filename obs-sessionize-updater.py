@@ -12,6 +12,21 @@ schedule_data               = None
 local_timezone = datetime.now(pytz.timezone('America/Phoenix')).strftime('%Z')
 
 
+def update_source_dropdowns(props):
+    # Get a list of all text sources
+    sources = obs.obs_enum_sources()
+    list_of_sources = [(obs.obs_source_get_name(source), obs.obs_source_get_name(source)) for source in sources if obs.obs_source_get_id(source) == 'text_gdiplus' or obs.obs_source_get_id(source) == 'text_ft2_source']
+
+    obs.source_list_release(sources)
+
+    # Add dropdown lists for the source names
+    for source_name in ["current_title_source", "current_presenters_source", "next_title_source", "next_presenters_source"]:
+        prop = obs.obs_properties_get(props, source_name)
+        obs.obs_property_list_clear(prop)
+        for item in list_of_sources:
+            obs.obs_property_list_add_string(prop, *item)
+            
+            
 def script_description():
     return "Updates text sources with current and next session information."
 
@@ -28,6 +43,10 @@ def script_update(settings):
     room_name = obs.obs_data_get_string(settings, "room_name")
     fetch_interval_minutes = obs.obs_data_get_int(settings, "fetch_interval_minutes")
 
+    props = obs.obs_properties_create()
+    update_source_dropdowns(props)
+    obs.obs_properties_destroy(props)
+    
 def script_defaults(settings):
     obs.obs_data_set_default_bool(settings, "enabled", False)
     obs.obs_data_set_default_string(settings, "url", "")
