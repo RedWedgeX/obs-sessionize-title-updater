@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 import pytz
 import hashlib
+import os
 
 # Properties
 last_fetch_time             = None
@@ -47,6 +48,15 @@ def script_update(settings):
     props = obs.obs_properties_create()
     update_source_dropdowns(props)
     obs.obs_properties_destroy(props)
+
+    # Check if the schedule JSON file exists
+    if not os.path.exists('schedule_data.json'):
+        # If it doesn't exist, fetch the data from the API
+        try:
+            fetch_data_from_api(url)
+            obs.script_log(obs.LOG_INFO, "Fetched schedule data from API.")
+        except requests.exceptions.RequestException:
+            obs.script_log(obs.LOG_WARNING, "Failed to fetch schedule data from API.")
     
 def script_defaults(settings):
     obs.obs_data_set_default_bool(settings, "enabled", False)
@@ -182,7 +192,7 @@ def set_text(source_name, text):
         obs.obs_source_update(source, settings)
         
         # Log the update
-        #obs.script_log(obs.LOG_INFO, f"Updated source {source_name} with text: {text}")
+        obs.script_log(obs.LOG_INFO, f"Updated source {source_name} with text: {text}")
         
         # Release the OBS data instance to free up memory
         obs.obs_data_release(settings)
@@ -194,7 +204,7 @@ def set_text(source_name, text):
         obs.script_log(obs.LOG_WARNING, f"Source {source_name} does not exist.")     
            
 # Function to update the last fetch time
-def update_last_fetch_time():
+ddef update_last_fetch_time():
     global last_fetch_time
     # Get the current time in UTC and format it as an ISO 8601 string
     last_fetch_time = datetime.utcnow().isoformat()
