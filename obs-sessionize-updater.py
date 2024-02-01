@@ -164,7 +164,7 @@ def set_text(source_name, text):
         obs.script_log(obs.LOG_WARNING, f"Source {source_name} does not exist.")
         
         
-d# Function to update the last fetch time
+# Function to update the last fetch time
 def update_last_fetch_time():
     global last_fetch_time
     # Get the current time in UTC and format it as an ISO 8601 string
