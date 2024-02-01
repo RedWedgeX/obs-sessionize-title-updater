@@ -13,9 +13,9 @@ local_timezone = datetime.now(pytz.timezone('America/Phoenix')).strftime('%Z')
 
 
 def update_source_dropdowns(props):
-    # Get a list of all text sources
+    # Get a list of all sources
     sources = obs.obs_enum_sources()
-    list_of_sources = [(obs.obs_source_get_name(source), obs.obs_source_get_name(source)) for source in sources if obs.obs_source_get_id(source) == 'text_gdiplus' or obs.obs_source_get_id(source) == 'text_ft2_source']
+    list_of_sources = [(obs.obs_source_get_name(source), obs.obs_source_get_name(source)) for source in sources]
 
     obs.source_list_release(sources)
 
@@ -25,6 +25,7 @@ def update_source_dropdowns(props):
         obs.obs_property_list_clear(prop)
         for item in list_of_sources:
             obs.obs_property_list_add_string(prop, *item)
+
             
             
 def script_description():
@@ -59,36 +60,20 @@ def script_defaults(settings):
     obs.obs_data_set_default_string(settings, "room_name", "")
     obs.obs_data_set_default_int(settings, "fetch_interval_minutes", 5)
 
-def script_properties():
     props = obs.obs_properties_create()
     obs.obs_properties_add_bool(props, "enabled", "Enabled")
     
-    # Get a list of all text sources
+    # Get a list of all sources
     sources = obs.obs_enum_sources()
-    list_of_sources = [(obs.obs_source_get_name(source), obs.obs_source_get_name(source)) for source in sources if obs.obs_source_get_id(source) == 'text_gdiplus' or obs.obs_source_get_id(source) == 'text_ft2_source']
-
-    # Debug logging
-    for source in sources:
-        obs.script_log(obs.LOG_INFO, f"Source name: {obs.obs_source_get_name(source)}, ID: {obs.obs_source_get_id(source)}")
+    list_of_sources = [(obs.obs_source_get_name(source), obs.obs_source_get_name(source)) for source in sources]
 
     obs.source_list_release(sources)
 
     # Add dropdown lists for the source names
-    prop = obs.obs_properties_add_list(props, "current_title_source", "Current Title Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
-    for item in list_of_sources:
-        obs.obs_property_list_add_string(prop, *item)
-
-    prop = obs.obs_properties_add_list(props, "current_presenters_source", "Current Presenters Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
-    for item in list_of_sources:
-        obs.obs_property_list_add_string(prop, *item)
-
-    prop = obs.obs_properties_add_list(props, "next_title_source", "Next Title Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
-    for item in list_of_sources:
-        obs.obs_property_list_add_string(prop, *item)
-
-    prop = obs.obs_properties_add_list(props, "next_presenters_source", "Next Presenters Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
-    for item in list_of_sources:
-        obs.obs_property_list_add_string(prop, *item)
+    for source_name in ["current_title_source", "current_presenters_source", "next_title_source", "next_presenters_source"]:
+        prop = obs.obs_properties_add_list(props, source_name, f"{source_name.replace('_', ' ').title()} Field", obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
+        for item in list_of_sources:
+            obs.obs_property_list_add_string(prop, *item)
 
     obs.obs_properties_add_int(props, "fetch_interval_minutes", "Fetch Interval (minutes)", 1, 60, 1)
 
