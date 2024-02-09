@@ -110,6 +110,18 @@ def script_properties():
 
     return props
 
+
+def insert_line_breaks(text, max_length):
+    if len(text) <= max_length:
+        return text
+
+    split_index = max_length
+    space_index = text.rfind(' ', 0, split_index)  # Find the nearest space to the split index
+    if space_index == -1:  # If there's no space to split at, split at the max_length
+        space_index = split_index
+    return text[:space_index] + '\n' + insert_line_breaks(text[space_index+1:], max_length)
+
+
 def fetch_data_from_api(api_url):
     # Send a GET request to the API
     response = requests.get(api_url)
@@ -237,18 +249,14 @@ def get_last_fetch_time():
 
 tick_counter = 0
 
-def script_tick(seconds):
-    global last_fetch_time, tick_counter
+def script_load(settings):
+    global last_fetch_time
 
-    # Increment the tick counter
-    tick_counter += 1
+    # Set up the timer to call script_tick every 10 seconds (10000 milliseconds)
+    obs.timer_add(update_titles, 10000)
 
-    # If 10 seconds have not passed, just return
-    if tick_counter < 10:
-        return
-
-    # Reset the tick counter
-    tick_counter = 0
+def update_titles():
+    global last_fetch_time
 
     if not enabled:
         return
@@ -269,8 +277,35 @@ def script_tick(seconds):
 
     # Get the current and next session titles and presenters from the local data
     current_title, current_presenters, next_title, next_presenters = get_data_from_local()
+
+    # Insert line breaks if the titles are too long
+    if current_title:
+        if current_presenters.lower() in ['naomi brockwell', 'riana pfefferkorn', 'riana']:
+            if current_presenters.lower == 'riana':
+                current_presenters = 'Riana Pfefferkorn'
+            current_title = f"KEYNOTE: {current_title}"
+        current_title = insert_line_breaks(current_title, 60)
+    if next_title:
+        if next_presenters.lower() in ['naomi brockwell', 'riana pfefferkorn ']:
+            next_title = f"KEYNOTE: {next_title}"
+        next_title = insert_line_breaks(next_title, 40)
+    
+   
+
     # Set the text of the current and next title and presenter sources
     set_text(current_title_source_name, current_title)
     set_text(current_presenters_source_name, current_presenters)
     set_text(next_title_source_name, next_title)
     set_text(next_presenters_source_name, next_presenters)
+
+
+def on_event(event):
+    obs.script_log(obs.LOG_INFO, f"Event: {event}")
+    if event == obs.OBS_FRONTEND_EVENT_SCENE_CHANGED:
+        update_titles()
+          
+def script_unload():
+    obs.obs_frontend_remove_event_callback(on_event)
+
+obs.obs_frontend_add_event_callback(on_event)
+
